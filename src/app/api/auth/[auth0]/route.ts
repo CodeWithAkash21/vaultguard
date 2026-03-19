@@ -1,23 +1,16 @@
-import { handleAuth, handleLogin } from '@auth0/nextjs-auth0'
-import { NextRequest, NextResponse } from 'next/server'
+import { handleAuth, handleLogin, handleLogout, handleCallback, handleProfile } from '@auth0/nextjs-auth0'
 
-const authHandler = handleAuth({
+export const GET = handleAuth({
   login: handleLogin({
     authorizationParams: {
       scope: 'openid profile email',
-      connection: 'google-oauth2',
-      access_type: 'offline',
-      prompt: 'consent',
     },
   }),
+  logout: handleLogout({
+    returnTo: process.env.AUTH0_BASE_URL,
+  }),
+  callback: handleCallback(),
+  profile: handleProfile(),
 })
 
-export async function GET(request: NextRequest, props: { params: Promise<{ auth0: string }> }) {
-  const params = await props.params
-  return authHandler(request, { params })
-}
-
-export async function POST(request: NextRequest, props: { params: Promise<{ auth0: string }> }) {
-  const params = await props.params
-  return authHandler(request, { params })
-}
+export const POST = handleAuth()
